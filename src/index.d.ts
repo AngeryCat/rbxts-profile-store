@@ -20,7 +20,7 @@ export as namespace ProfileStore;
 
 declare namespace ProfileStore {
 	// Types
-	export { Profile, VersionQuery, ProfileStore };
+	export { Profile, VersionQuery, Store };
 
 	/**
 	 * When the Roblox is shutting down this value will be set to true and most methods will silently fail.
