@@ -1,7 +1,8 @@
 import { Signal } from "./signal";
 import { Store } from "./store";
+import { JSONAcceptable } from "./utility";
 
-export interface Profile<T extends object> {
+export interface Profile<Template extends object, RobloxMetadata extends object = object> {
 	/**
 	 * This is the data that would resemble player progress or other data you wish to save to the DataStore.
 	 *
@@ -11,14 +12,14 @@ export interface Profile<T extends object> {
 	 *
 	 * If needed, you may set Profile.Data to a new table reference (e.g. Profile.Data = {}). When Profile:IsActive() returns false changes to Profile.Data are no longer stored to the DataStore.
 	 */
-	Data: T;
+	Data: Template;
 
 	/**
 	 * This is a version of Profile.Data that has been successfully stored to the DataStore.
 	 *
 	 * Useful for verifying what particular data has been saved, or for securely handling developer product purchases.
 	 */
-	readonly LastSavedData: T;
+	readonly LastSavedData: Template;
 
 	/**
 	 * A Unix timestamp of when the profile was created.
@@ -44,7 +45,7 @@ export interface Profile<T extends object> {
 	 *
 	 * The way this table is saved is equivalent to using DataStoreSetOptions:SetMetaData(Profile.RobloxMetaData) and passing the DataStoreSetOptions object to a :SetAsync() call, except changes will truly get saved on the next auto-save cycle or when the profile session is ended.
 	 */
-	readonly RobloxMetaData: unknown;
+	readonly RobloxMetaData: RobloxMetadata;
 
 	/**
 	 * User ids associated with this profile.
@@ -98,12 +99,12 @@ export interface Profile<T extends object> {
 	 *
 	 * After this signal is fired, the values Profile.LastSavedData and Profile.KeyInfo will have been changed - Profile.LastSavedData can be used to verify which particular changes to Profile.Data have been successfully saved to the DataStore.
 	 */
-	readonly OnAfterSave: Signal;
+	readonly OnAfterSave: Signal<[lastSavedData: Template]>;
 
 	/**
 	 * The ProfileStore object that was used to create this profile.
 	 */
-	readonly ProfileStore: Store<T>;
+	readonly ProfileStore: Store<Template>;
 
 	/**
 	 * The DataStore key of this profile. This is the first passed argument to ProfileStore:StartSessionAsync() or ProfileStore:GetAsync().
@@ -152,7 +153,7 @@ export interface Profile<T extends object> {
 	 *
 	 * If a message is not processed by calling processed(), ProfileStore will continue to iterate through other functions passed to Profile:MessageHandler() and will broadcast the same message. Unprocessed messages will be broadcasted to new functions passed to Profile:MessageHandler() and will continue to do so when a profile session is started another time (e.g. after a player joins the game again) until processed() is finally called.
 	 */
-	MessageHandler(message: object, processed: () => void): void;
+	MessageHandler<R extends JSONAcceptable>(handler: (message: R, processed: () => void) => void): void;
 
 	/**
 	 * Calling Profile:Save() will immediately save Profile.Data to the DataStore when a profile session is still active (Profile:IsActive() returns true).

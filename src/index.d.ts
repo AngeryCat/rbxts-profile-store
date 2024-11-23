@@ -2,6 +2,7 @@ import { Signal } from "./signal";
 import { Store } from "./store";
 import { Profile } from "./profile";
 import { VersionQuery } from "./version";
+import { JSONAcceptable } from "./utility";
 
 type ProfileStoreConstant =
 	| "AUTO_SAVE_PERIOD"
@@ -20,7 +21,7 @@ export as namespace ProfileStore;
 
 declare namespace ProfileStore {
 	// Types
-	export { Profile, VersionQuery, Store };
+	export { Profile, VersionQuery, Store, JSONAcceptable };
 
 	/**
 	 * When the Roblox is shutting down this value will be set to true and most methods will silently fail.
@@ -63,7 +64,10 @@ declare namespace ProfileStore {
 	/**
 	 * ProfileStore objects expose methods for reading and writing to profiles. Equivalent of :GetDataStore() in Roblox DataStoreService API.
 	 */
-	export function New<T extends object>(storeName: string, template?: T): Store<T>;
+	export function New<Template extends object, RobloxMetadata extends object = object>(
+		storeName: string,
+		template?: Template,
+	): Store<Template, RobloxMetadata>;
 
 	/**
 	 * A feature for experienced developers who understand how ProfileStore works for changing internal constants without having to fork the ProfileStore project.
