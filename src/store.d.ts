@@ -3,6 +3,13 @@ import { VersionQuery } from "./version";
 
 export interface Store<T extends object> {
 	/**
+	 * `ProfileStore.Mock` is a reflection of methods available in the `ProfileStore`, but said methods will now operate on profiles stored on a separate "fake" DataStore that will be forgotten when the game server shuts down.
+	 *
+	 * Profiles loaded using the same key from `ProfileStore` and `ProfileStore.Mock` will be different profiles because the regular and mock versions of a `ProfileStore` are isolated from each other.
+	 */
+	readonly Mock: Omit<Store<T>, "Mock">;
+
+	/**
 	 * The name of the DataStore that was defined as the first argument of ProfileStore.New().
 	 */
 	readonly Name: string;
